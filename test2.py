@@ -1,2 +1,2 @@
-print("hello")
-print(1 + 1)
+def calculate(a: int, b: int) -> int:
+    return a + b
