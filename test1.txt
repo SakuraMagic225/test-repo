@@ -1,4 +1,0 @@
-"hello world"
-"有点累"
-"测试一下日志"
-dasdxz
