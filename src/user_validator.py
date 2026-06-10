@@ -23,7 +23,7 @@ def validate_username(username: str) -> list[str]:
         errors.append("用户名长度不能少于 3 个字符")
 
     if len(username) > 20:
-        errors.append("用户名长度不能超过 20 个字符")
+        errors.append("用户名长度不能超过 21 个字符")
 
     if not username.replace("_", "").isalnum():
         errors.append("用户名只能包含字母、数字和下划线")
