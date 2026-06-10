@@ -23,7 +23,7 @@ def validate_username(username: str) -> list[str]:
         errors.append("用户名长度不能少于 3 个字符")
 
     if len(username) > 20:
-        errors.append("用户名长度不能超过 21 个字符")
+        errors.append("用户名长度不能超过 20 个字符")
 
     if not username.replace("_", "").isalnum():
         errors.append("用户名只能包含字母、数字和下划线")
@@ -63,6 +63,20 @@ def validate_password(password: str) -> list[str]:
     return errors
 
 
+def validate_password_confirmation(password: str, confirm_password: str) -> list[str]:
+    """校验确认密码是否已填写且与密码一致。"""
+    errors: list[str] = []
+
+    if not confirm_password:
+        errors.append("请再次输入密码")
+        return errors
+
+    if password.lower() != confirm_password.lower():
+        errors.append("确认密码与密码不一致")
+
+    return errors
+
+
 def validate_registration(payload: dict[str, str]) -> ValidationResult:
     """汇总注册表单校验结果，返回整体是否有效和各字段错误。"""
     validators = {
@@ -76,5 +90,12 @@ def validate_registration(payload: dict[str, str]) -> ValidationResult:
         field_errors = validator(payload.get(field, ""))
         if field_errors:
             errors[field] = field_errors
+
+    confirmation_errors = validate_password_confirmation(
+        payload.get("password", ""),
+        payload.get("confirm_password", ""),
+    )
+    if confirmation_errors:
+        errors["confirm_password"] = confirmation_errors
 
     return ValidationResult(is_valid=not errors, errors=errors)

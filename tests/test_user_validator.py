@@ -2,6 +2,7 @@ from src.user_validator import (
     ValidationResult,
     validate_email,
     validate_password,
+    validate_password_confirmation,
     validate_registration,
     validate_username,
 )
@@ -31,12 +32,23 @@ def test_validate_password_requires_letters_and_numbers() -> None:
     assert validate_password("abcdefgh") == ["密码需要同时包含字母和数字"]
 
 
+def test_validate_password_confirmation_accepts_matching_passwords() -> None:
+    assert validate_password_confirmation("abc12345", "abc12345") == []
+
+
+def test_validate_password_confirmation_rejects_mismatched_passwords() -> None:
+    assert validate_password_confirmation("abc12345", "abc123456") == [
+        "确认密码与密码不一致"
+    ]
+
+
 def test_validate_registration_returns_success_for_valid_input() -> None:
     result = validate_registration(
         {
             "username": "alice_01",
             "email": "alice@example.com",
             "password": "abc12345",
+            "confirm_password": "abc12345",
         }
     )
 
@@ -49,6 +61,7 @@ def test_validate_registration_collects_field_errors() -> None:
             "username": "ab",
             "email": "alice.example.com",
             "password": "abcdefgh",
+            "confirm_password": "abcdefgh",
         }
     )
 
@@ -59,4 +72,20 @@ def test_validate_registration_collects_field_errors() -> None:
             "email": ["邮箱格式不正确"],
             "password": ["密码需要同时包含字母和数字"],
         },
+    )
+
+
+def test_validate_registration_collects_confirmation_error() -> None:
+    result = validate_registration(
+        {
+            "username": "alice_01",
+            "email": "alice@example.com",
+            "password": "abc12345",
+            "confirm_password": "abc123456",
+        }
+    )
+
+    assert result == ValidationResult(
+        is_valid=False,
+        errors={"confirm_password": ["确认密码与密码不一致"]},
     )
