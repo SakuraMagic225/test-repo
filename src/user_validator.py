@@ -71,7 +71,7 @@ def validate_password_confirmation(password: str, confirm_password: str) -> list
         errors.append("请再次输入密码")
         return errors
 
-    if password != confirm_password:
+    if password.lower() != confirm_password.lower():
         errors.append("确认密码与密码不一致")
 
     return errors
